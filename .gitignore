@@ -1,0 +1,21 @@
+# Terraform files to ignore
+.terraform/          
+*.tfplan              
+*.tfplan.backup       
+*.tfstate             
+*.tfstate.backup      
+crash.log             
+.terraform.lock.hcl   
+
+# Generated application/deployment files
+*.zip                 # Lambda deployment packages (e.g., lambda_function_payload.zip)
+*.egg-info/           # Python egg info
+__pycache__/          # Python bytecode cache
+.pytest_cache/        # Pytest cache
+
+# IDE and OS generated files
+.vscode/              # VS Code settings
+.idea/                # IntelliJ/PyCharm settings
+.DS_Store             # macOS system files
+*.log                 # Generic log files
+npm-debug.log*        # Node.js debug logs if any frontend tooling is used
