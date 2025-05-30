@@ -4,7 +4,6 @@ data "aws_canonical_user_id" "current" {}
 
 resource "aws_s3_bucket" "bucket_config" {
   bucket = "aitc-s3"
-
 }
 
 
