@@ -1,11 +1,16 @@
-# Terraform files to ignore
-.terraform/          
-*.tfplan              
-*.tfplan.backup       
-*.tfstate             
-*.tfstate.backup      
-crash.log             
-.terraform.lock.hcl   
+# Terraform files
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+.terraform.lock.hcl
+
+# Local configuration files
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
 
 # Generated application/deployment files
 *.zip                 # Lambda deployment packages (e.g., lambda_function_payload.zip)
