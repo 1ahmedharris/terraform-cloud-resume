@@ -8,25 +8,6 @@ resource "aws_s3_bucket" "bucket_config" {
 }
 
 
-resource "aws_s3_bucket_acl" "bucket_config_acl" {
-  bucket = aws_s3_bucket.bucket_config.id
-  
-  access_control_policy {
-    grant {
-      grantee {
-        id   = data.aws_canonical_user_id.current.id # The specific ID from your state show output
-        type = "CanonicalUser"
-      }
-      permission = "FULL_CONTROL"
-    }
-
-    owner {
-      id = data.aws_canonical_user_id.current.id
-    }
-  } 
-}
-
-
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_config_sse" {
   bucket = aws_s3_bucket.bucket_config.id
 
