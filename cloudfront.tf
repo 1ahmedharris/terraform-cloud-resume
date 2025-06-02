@@ -1,11 +1,7 @@
-# cloudfront.tf
+
 
 locals {
-  s3_origin_id = "aitc-s3-origin" 
-  # Collect all the ETags from the S3 objects managed by Terraform.
-  # s3_objects_etags_list = [for obj in aws_s3_object.website_files : obj.etag]
-  # Create a unique hash from the sorted list of ETags.
-  # cloudfront_invalidation_hash = sha1(join("", sort(local.s3_objects_etags_list)))
+  s3_origin_id = "aitc-s3-origin"
 }
 
 data "aws_cloudfront_cache_policy" "caching_optimized" {
@@ -66,13 +62,3 @@ resource "aws_cloudfront_distribution" "cloudfront_distro" {
 }
 
 
-# resource "aws_cloudfront_invalidation" "s3_content_invalidation" {
-#  distribution_id = aws_cloudfront_distribution.cloudfront_distro.id
-#  paths = ["/*"]
-#  # caller_reference must change for CloudFront to create a new invalidation.
-#  caller_reference = local.cloudfront_invalidation_hash
-  # Invalidation runs AFTER the S3 objects have been updated.
-#  depends_on = [
-#    aws_s3_object.website_files
-#  ]
-#}
