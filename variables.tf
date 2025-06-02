@@ -35,3 +35,8 @@ variable "cloudfront_restriction_type" {
   type        = string
 }
 
+
+variable "lambda_function" {
+  description = "Visitor counter Lambda function."
+  type        = string
+}
