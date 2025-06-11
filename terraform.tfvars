@@ -5,6 +5,7 @@ acm_certificate_arn = "arn:aws:acm:us-east-1:941377150270:certificate/7a4f2333-d
 cloudfront_web_acl_arn = "arn:aws:wafv2:us-east-1:941377150270:global/webacl/CreatedByCloudFront-e5fddf7d-adfe-47d9-ac30-9c4f2c4f22f3/257fcf48-1155-4387-b2ff-7ca6be751f8e"
 cloudfront_restriction_type = "blacklist"
 lambda_function = "aitc-lamba-function"
+lambda_counter_zip = "terraform-cloud-resume/build"
 cloudfront_restriction_locations = [
   "AL", "AM", "AR", "AT", "AU", "BE", "BG",
   "BR", "BY", "CH", "CI", "CN", "CY", "CZ",
