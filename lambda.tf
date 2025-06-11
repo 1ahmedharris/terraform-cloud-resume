@@ -13,7 +13,7 @@ resource "aws_iam_role" "lambda_dynamodb_role" {
         Principal = {
           Service = "lambda.amazonaws.com"
         }
-        Action = "sts:AssumeRole"
+        Action    = "sts:AssumeRole"
       }
     ]
   })
@@ -85,11 +85,10 @@ resource "aws_lambda_permission" "allow_function_url_invocation" {
 resource "aws_lambda_function_url" "lambda_counter_url" {
   function_name      = aws_lambda_function.lambda_counter_api.function_name
   authorization_type = "NONE" 
-  invoke_mode = "BUFFERED"
+  invoke_mode        = "BUFFERED"
 
   cors {
     allow_credentials = true
-    # Allows requests from CloudFront distribution domain
     allow_origins     = ["https://${aws_cloudfront_distribution.cloudfront_distro.domain_name}"] 
     allow_methods     = ["GET", "POST", "OPTIONS"]
     allow_headers     = ["Content-Type"] # Add X-Api-Key for API key check or for IAM "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token"
@@ -100,5 +99,5 @@ resource "aws_lambda_function_url" "lambda_counter_url" {
 
 output "lambda_counter_url_output" {
   value       = aws_lambda_function_url.lambda_counter_url.function_url
-  description = "The URL endpoint for the visitor counter Lambda function."
+  description = "URL endpoint for Lambda visitor counter function."
 }
