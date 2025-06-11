@@ -40,3 +40,9 @@ variable "lambda_function" {
   description = "Visitor counter Lambda function."
   type        = string
 }
+
+
+variable "lambda_counter_zip" {
+  description = "Visitor counter Lambda file path."
+  type        = string
+}
