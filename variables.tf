@@ -46,3 +46,14 @@ variable "lambda_counter_zip" {
   description = "Visitor counter Lambda file path."
   type        = string
 }
+
+
+variable "views_count" {
+  description = "Counter for visitor-count-table views."
+  type        = string
+}
+
+variable "counter" {
+  description = "Id attribute for the counter item in the visitor-count-table."
+  type        = string
+}
