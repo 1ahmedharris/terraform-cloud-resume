@@ -20,7 +20,7 @@ resource "aws_dynamodb_table" "visitor_count_table" {
 }
 
 # Manages the "views" attribute
-resource "aws_dynamodb_table_item" "visitor_count_initial_item" {
+resource "aws_dynamodb_table_item" "views_item" {
   table_name = aws_dynamodb_table.visitor_count_table.name
   hash_key   = aws_dynamodb_table.visitor_count_table.hash_key
 
