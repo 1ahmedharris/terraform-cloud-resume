@@ -49,11 +49,11 @@ variable "lambda_counter_zip" {
 
 
 variable "views_count" {
-  description = "Counter for visitor-count-table views."
+  description = "Count for visitor-count-table/site views."
   type        = string
 }
 
-variable "counter" {
+variable "count_id" {
   description = "Id attribute for the counter item in the visitor-count-table."
   type        = string
 }
