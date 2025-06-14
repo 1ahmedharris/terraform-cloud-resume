@@ -72,14 +72,17 @@ resource "aws_lambda_function" "lambda_counter_api" {
   ]
 }
 
-resource "aws_lambda_permission" "allow_function_url_invocation" {
-  action        = "lambda:InvokeFunctionUrl"
-  function_name = aws_lambda_function.lambda_counter_api.function_name
-  principal     = "*" 
-  statement_id  = "FunctionURLAllowPublicAccess" 
-  depends_on = [
-    aws_lambda_function_url.lambda_counter_url
-  ]
+resource "aws_lambda_permission" "distribution_lambda" {
+  action                 = "lambda:invokeFunctionUrl"
+  function_name          = aws_lambda_function.lambda_counter_api.function_name
+  function_url_auth_type = "NONE"
+  principal              = "*"
+
+  lifecycle {
+    replace_triggered_by = [
+      aws_lambda_function.lambda_counter_api
+    ]
+  }
 }
 
 resource "aws_lambda_function_url" "lambda_counter_url" {
@@ -88,10 +91,10 @@ resource "aws_lambda_function_url" "lambda_counter_url" {
   invoke_mode        = "BUFFERED"
 
   cors {
-    allow_credentials = true
-    allow_origins     = ["https://${aws_cloudfront_distribution.cloudfront_distro.domain_name}"] 
-    allow_methods     = ["GET", "POST", "OPTIONS"]
-    allow_headers     = ["Content-Type"] # Add X-Api-Key for API key check or for IAM "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token"
+    allow_credentials = false
+    allow_origins     = ["*"] 
+    allow_methods     = ["GET", "POST"]
+    allow_headers     = ["Content-Type"]
     expose_headers    = []
     max_age           = 86400
   }
