@@ -1,5 +1,3 @@
-
-
 locals {
   s3_origin_id = "aitc-s3-origin"
 }
@@ -15,7 +13,7 @@ resource "aws_cloudfront_origin_access_control" "cloudfront_oac" {
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_distribution" "cloudfront_distro" {
+resource "aws_cloudfront_distribution" "cloudfront_cdn" {
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "site origin"
