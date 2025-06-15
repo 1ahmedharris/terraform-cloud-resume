@@ -57,7 +57,6 @@ resource "aws_s3_bucket_policy" "bucket_config_policy" {
 
 # Define local filepath values to iterate through
 # Discover ALL files recursively within the specified website_content_path
-# (**) matches all files and all subdirectories.
 locals {
   files = fileset(var.website_content_path, "**/*")
   # Create map where keys are the S3 object keys
