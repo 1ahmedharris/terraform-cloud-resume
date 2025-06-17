@@ -4,6 +4,10 @@ cloudfront_web_acl_arn      = "arn:aws:wafv2:us-east-1:941377150270:global/webac
 cloudfront_restriction_type = "blacklist"
 lambda_function             = "aitc-lamba-function"
 lambda_counter_zip          = "build/lambda_counter.zip"
+main_resume_domain_name     = "ahmedharrisresume.com"
+main_resume_subdomain       = "www.ahmedharrisresume.com"
+devops_resume_domain_name   = "ahmedharrisdevops.com"
+devops_resume_subdomain     = "www.ahmedharrisdevops.com"
 cloudfront_restriction_locations = [
   "AL", "AM", "AR", "AT", "AU", "BE", "BG",
   "BR", "BY", "CH", "CI", "CN", "CY", "CZ",
