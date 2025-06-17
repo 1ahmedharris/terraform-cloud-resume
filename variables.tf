@@ -1,3 +1,9 @@
+variable "s3_bucket" {
+  description = "Name of s3 bucket"
+  type = string
+}
+
+
 variable "website_content_path" {
   description = "Local file system path to the root directory of website content."
   type        = string
