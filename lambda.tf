@@ -94,7 +94,7 @@ resource "aws_lambda_function_url" "lambda_counter_url" {
     allow_credentials = false
     allow_origins     = ["*"] 
     allow_methods     = ["GET", "POST"]
-    allow_headers     = ["Content-Type"]
+    allow_headers     = ["content-type"]
     expose_headers    = []
     max_age           = 86400
   }
