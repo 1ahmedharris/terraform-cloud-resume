@@ -1,3 +1,4 @@
+s3_bucket                   = "aitc-s3"
 website_content_path        = "C:/Users/aitc1/OneDrive/Desktop/aitc/web-projects/test-site"
 acm_certificate_arn         = "arn:aws:acm:us-east-1:941377150270:certificate/7a4f2333-db72-487d-9d6d-9460d4c89d82"
 cloudfront_web_acl_arn      = "arn:aws:wafv2:us-east-1:941377150270:global/webacl/CreatedByCloudFront-e5fddf7d-adfe-47d9-ac30-9c4f2c4f22f3/257fcf48-1155-4387-b2ff-7ca6be751f8e"
@@ -21,7 +22,6 @@ cloudfront_restriction_locations = [
   "TH", "TR", "TW", "TZ", "UA", "UG", "UZ", 
   "VE", "VN", "ZA"
 ]
-
 cloudfront_aliases = [
   "ahmedharrisdevops.com",
   "ahmedharrisresume.com",
