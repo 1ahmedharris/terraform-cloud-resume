@@ -1,4 +1,4 @@
-## **Terraform AWS Cloud Resume** <samp><img src="frontend/images/cloud1.ico" width="24" height="22" border="10"/></samp>
+## **Terraform AWS Cloud Resume** <samp><img src="cloud1.ico" width="24" height="22" border="10"/></samp>
 
 Check it out here: [ahmedharrisdevops.com](https://ahmedharrisdevops.com) 
 
