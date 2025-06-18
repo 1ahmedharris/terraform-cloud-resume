@@ -9,10 +9,10 @@ This repo is my AWS Cloud Resume infrastructure written in Terraform.
 * CI/CD: GitHub Actions
 
 ## **Architecture** 
-* route53.tf - Configures DNS management & custom domains within Route 53, directing traffic to CloudFront CDN.
-* cloudfront.tf - Provisions CloudFront distribution to serve S3 website content.
-* s3.tf - Creates S3 bucket to host Cloud Resume website content.
-* lambda.tf - Configures Python Lambda function, IAM roles and permissions, to update DynamoDB visitor count.
-* dynamodb.tf - Provisions DynamoDB table to store website visitor count.
+* route53.tf      Configures DNS management & custom domains within Route 53, directing traffic to CloudFront CDN.
+* cloudfront.tf   Provisions CloudFront distribution to serve S3 website content.
+* s3.tf           Creates S3 bucket to host Cloud Resume website content.
+* lambda.tf       Configures Python Lambda function, IAM roles and permissions, to update DynamoDB visitor count.
+* dynamodb.tf     Provisions DynamoDB table to store website visitor count.
 
 
