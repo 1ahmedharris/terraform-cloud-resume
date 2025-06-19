@@ -9,7 +9,7 @@ This repo is my AWS Cloud Resume infrastructure written in Terraform.
 * CI/CD: GitHub Actions
 
 <pre>
-## **Architecture** 
+**Architecture** 
 * route53.tf      Configures DNS management & custom domains within Route 53, directing traffic to CloudFront CDN.
 * cloudfront.tf   Provisions CloudFront distribution to serve S3 website content.
 * s3.tf           Creates S3 bucket to host Cloud Resume website content.
