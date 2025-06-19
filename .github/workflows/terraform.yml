@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Provision Terraform Cloud Resume Infrastructure
 
 on:
@@ -37,3 +38,6 @@ jobs:
         id: apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve
+=======
+
+>>>>>>> 4f3f238fb0884b995ccffbdc7a266a769dccd4ad
