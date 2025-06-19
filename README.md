@@ -1,6 +1,6 @@
-## **Terraform AWS Cloud Resume**&nbsp; <samp><img src="cloud1.ico" width="32" height="30" border="18"/></samp>
+## **Terraform AWS Cloud Resume** <samp><img src="cloud1.ico" width="34" height="32" border="20"/></samp>
 
-Check it out here: [ahmedharrisdevops.com](https://ahmedharrisdevops.com) 
+Live Demo: [ahmedharrisdevops.com](https://ahmedharrisdevops.com) 
 
 This repo is my AWS Cloud Resume infrastructure configured in Terraform.
 
