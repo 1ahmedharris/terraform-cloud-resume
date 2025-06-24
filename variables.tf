@@ -1,5 +1,25 @@
+variable "aws_account_id" {
+  description = "AWS id."
+  type        = string
+}
+
+variable "github_username" {
+  description = "GitHub username."
+  type        = string
+}
+
+variable "github_repo_name" {
+  description = "GitHub repository name."
+  type        = string
+}
+
+variable "aws_region" {
+  description = "AWS region."
+  type        = string
+}
+
 variable "s3_bucket" {
-  description = "Name of s3 bucket"
+  description = "Name of s3 bucket."
   type = string
 }
 
