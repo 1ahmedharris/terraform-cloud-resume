@@ -6,21 +6,21 @@ crash.log
 crash.*.log
 .terraform.lock.hcl
 
-# Local configuration files
+# Local config files
 *.tfvars
 *.tfvars.json
 override.tf
 override.tf.json
 
-# Generated application/deployment files
-*.zip                 # Lambda deployment packages (e.g., lambda_function_payload.zip)
-*.egg-info/           # Python egg info
-__pycache__/          # Python bytecode cache
-.pytest_cache/        # Pytest cache
+# Generated deployment files
+*.zip                  
+*.egg-info/          
+__pycache__/          
+.pytest_cache/        
 
 # IDE and OS generated files
-.vscode/              # VS Code settings
-.idea/                # IntelliJ/PyCharm settings
-.DS_Store             # macOS system files
-*.log                 # Generic log files
-npm-debug.log*        # Node.js debug logs if any frontend tooling is used
+.vscode/              
+.idea/                
+.DS_Store             
+*.log                 
+npm-debug.log*       
