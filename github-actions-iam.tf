@@ -3,7 +3,7 @@ resource "aws_iam_role" "github_actions_resume_role" {
   name = "github-actions-resume-role"
   max_session_duration = 3600 
 
-  # Trust Policy (assume_role_policy).
+  # Trust Policy (assume_role_policy)
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
