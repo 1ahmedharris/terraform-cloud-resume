@@ -83,4 +83,14 @@ variable "devops_resume_subdomain" {
   type        = string
 }
 
+variable "main_resume_hosted_zone" {
+  description = "www.ahmedharrisresume.com hosted zone id"
+  type        = string
+}
+
+variable "devops_resume_hosted_zone" {
+  description = "www.ahmedharrisdevops.com hosted zone id"
+  type        = string
+}
+
 
