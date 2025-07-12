@@ -1,3 +1,4 @@
+aws_region                  = "us-east-1" 
 s3_bucket                   = "aitc-s3"
 website_content_path        = "C:/Users/aitc1/OneDrive/Desktop/aitc/web-projects/test-site"
 acm_certificate_arn         = "arn:aws:acm:us-east-1:941377150270:certificate/7a4f2333-db72-487d-9d6d-9460d4c89d82"
@@ -5,10 +6,18 @@ cloudfront_web_acl_arn      = "arn:aws:wafv2:us-east-1:941377150270:global/webac
 cloudfront_restriction_type = "blacklist"
 lambda_function             = "aitc-lamba-function"
 lambda_counter_zip          = "build/lambda_counter.zip"
+main_resume_hosted_zone     = "Z01018062M98VOF9SUSIM"
+devops_resume_hosted_zone   = "Z056701228ISTWPXZ137W"
 main_resume_domain_name     = "ahmedharrisresume.com"
 main_resume_subdomain       = "www.ahmedharrisresume.com"
 devops_resume_domain_name   = "ahmedharrisdevops.com"
 devops_resume_subdomain     = "www.ahmedharrisdevops.com"
+s3_remote_backend           = "resume-remote-backend"
+dynamodb_lock_table         = "resume-state-lock-table"
+github_org_name             = "1ahmedharris" 
+github_repo_name            = "terraform-cloud-resume" 
+github_actions_iam_policy   = "github-actions-resume-policy"
+
 cloudfront_restriction_locations = [
   "AL", "AM", "AR", "AT", "AU", "BE", "BG",
   "BR", "BY", "CH", "CI", "CN", "CY", "CZ",
@@ -22,6 +31,7 @@ cloudfront_restriction_locations = [
   "TH", "TR", "TW", "TZ", "UA", "UG", "UZ", 
   "VE", "VN", "ZA"
 ]
+
 cloudfront_aliases = [
   "ahmedharrisdevops.com",
   "ahmedharrisresume.com",
