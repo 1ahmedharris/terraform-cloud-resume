@@ -3,14 +3,13 @@ resource "aws_iam_role" "github_actions_resume_role" {
   name = "github-actions-resume-role"
   max_session_duration = 3600 
 
-# Trust Policy (assume_role_policy)
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
+          Federated = "arn:aws:iam::${var.aws_id}:oidc-provider/token.actions.githubusercontent.com"
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
@@ -24,7 +23,7 @@ resource "aws_iam_role" "github_actions_resume_role" {
   })
 }
 
-# IAM permissions for github-actions-resume-policy 
+# github-actions- Permissions Policy 
 locals {
   github_actions_resume_permissions_json = jsonencode(
     {
@@ -80,9 +79,8 @@ locals {
           "Effect": "Allow",
           "Action": [
             "s3:PutObject",
-            "s3:GetObject",
-            "s3:DeleteObject"
-          ], 
+            "s3:GetObject"
+          ],
           "Resource": "arn:aws:s3:::${var.s3_bucket}/*"
         },
         {
@@ -112,7 +110,7 @@ locals {
             "iam:AttachRolePolicy",
             "iam:ListAttachedRolePolicies"
           ],
-          "Resource": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/lamba-dynamodb-role"
+          "Resource": "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role"
         },
         {
           "Sid": "LambdaBasicExecutionPolicyRead",
@@ -124,7 +122,7 @@ locals {
           "Sid": "LambdaPassRole",
           "Effect": "Allow",
           "Action": "iam:PassRole",
-          "Resource": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/lamba-dynamodb-role"
+          "Resource": "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role"
         },
         {
           "Sid": "LambdaFunctionManagement",
@@ -143,8 +141,8 @@ locals {
             "lambda:ListFunctionUrlConfigs"
           ],
           "Resource": [
-            "arn:aws:lambda:${var.aws_region}:${data.aws_caller_identity.current.account_id}:function:${var.lambda_function}",
-            "arn:aws:lambda:${var.aws_region}:${data.aws_caller_identity.current.account_id}:function:${var.lambda_function}:*"
+            "arn:aws:lambda:${var.aws_region}:${var.aws_id}:function:${var.lambda_function}",
+            "arn:aws:lambda:${var.aws_region}:${var.aws_id}:function:${var.lambda_function}:*"
           ]
         },
         {
@@ -154,7 +152,7 @@ locals {
             "logs:CreateLogGroup",
             "logs:DescribeLogGroups"
           ],
-          "Resource": "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.lambda_function}:*"
+          "Resource": "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:/aws/lambda/${var.lambda_function}:*"
         },
         {
           "Sid": "DynamoDBTableManagement",
@@ -163,14 +161,11 @@ locals {
             "dynamodb:CreateTable",
             "dynamodb:DescribeTable",
             "dynamodb:UpdateTable",
-            "dynamodb:ListTables",
-            "dynamodb:GetItem",
-            "dynamodb:PutItem",
-            "dynamodb:UpdateItem"
+            "dynamodb:ListTables"
           ],
           "Resource": [
-            "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/visitor-count-table",
-            "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/visitor-count-table/*"
+            "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
+            "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table/*"
           ]
         },
         {
@@ -215,23 +210,24 @@ locals {
           "Action": [
             "dynamodb:GetItem",
             "dynamodb:PutItem",
-            "dynamodb:DescribeTable",
-            "dynamodb:DeleteItem"
+            "dynamodb:DescribeTable"
           ],
-          "Resource": "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_lock_table}"
+          "Resource": "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.dynamodb_lock_table}"
         }
       ]
     }
   )
 }
- 
+
+
 resource "aws_iam_policy" "github_actions_resume_policy" {
   name        = var.github_actions_iam_policy 
   policy      = local.github_actions_resume_permissions_json 
   description = "Permissions for GitHub Actions ci/cd worklow to assume role and manage aws resources."
 }
 
-resource "aws_iam_role_policy_attachment" "github_actions_policy_attachment" {
-  role        = aws_iam_role.github_actions_resume_role.name     
-  policy_arn  = aws_iam_policy.github_actions_resume_policy.arn
+resource "aws_iam_role_policy" "github_actions_resume_policy" {
+  name   = var.github_actions_iam_policy 
+  role   = aws_iam_role.github_actions_resume_role.id 
+  policy = local.github_actions_resume_permissions_json 
 }
