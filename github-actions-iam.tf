@@ -219,15 +219,12 @@ locals {
   )
 }
 
-
 resource "aws_iam_policy" "github_actions_resume_policy" {
   name        = var.github_actions_iam_policy 
-  policy      = local.github_actions_resume_permissions_json 
-  description = "Permissions for GitHub Actions ci/cd worklow to assume role and manage aws resources."
+  policy      = local.github_actions_resume_permissions_json
 }
 
-resource "aws_iam_role_policy" "github_actions_resume_policy" {
-  name   = var.github_actions_iam_policy 
-  role   = aws_iam_role.github_actions_resume_role.id 
-  policy = local.github_actions_resume_permissions_json 
+resource "aws_iam_role_policy_attachment" "github_actions_policy_attachment" {
+  role       = aws_iam_role.github_actions_resume_role.name
+  policy_arn = aws_iam_policy.github_actions_resume_policy.arn
 }
