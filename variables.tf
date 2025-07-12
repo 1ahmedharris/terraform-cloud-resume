@@ -3,9 +3,14 @@ variable "aws_region" {
   type        = string
 }
 
+variable "aws_id" {
+  description = "AWS id"
+  type        = string
+}
+
 variable "s3_bucket" {
   description = "Name of s3 bucket."
-  type = string
+  type        = string
 }
 
 variable "website_content_path" {
