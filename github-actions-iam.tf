@@ -73,7 +73,8 @@ locals {
             "s3:PutBucketVersioning",
             "s3:ListBucket",
             "s3:GetBucketCORS",
-            "s3:GetBucketWebsite" 
+            "s3:GetBucketWebsite",
+            "s3:GetAccelerateConfiguration" 
           ],
           "Resource": "arn:aws:s3:::${var.s3_bucket}"
         },
@@ -101,8 +102,9 @@ locals {
             "iam:ListRoles",
             "iam:GetRole",
             "iam:GetPolicy",
-            "iam:ListRolePolicies",  
-            "iam:GetPolicyVersion"   
+            "iam:ListRolePolicies",
+            "iam:GetPolicyVersion",
+            "iam:ListAttachedRolePolicies"
           ],
           "Resource": "*"
         },
@@ -162,7 +164,7 @@ locals {
           "Action": [
             "logs:CreateLogGroup",
             "logs:DescribeLogGroups",
-            "logs:ListTagsForResource" 
+            "logs:ListTagsForResource"
           ],
           "Resource": "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:*"
         },
@@ -175,7 +177,8 @@ locals {
             "dynamodb:UpdateTable",
             "dynamodb:ListTables",
             "dynamodb:DescribeContinuousBackups",
-            "dynamodb:DescribeTimeToLive" 
+            "dynamodb:DescribeTimeToLive",
+            "dynamodb:ListTagsOfResource" # ADDED: Required for DynamoDB table tags
           ],
           "Resource": [
             "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
@@ -215,7 +218,8 @@ locals {
             "s3:PutObject",
             "s3:GetBucketPolicy",
             "s3:DeleteObject",
-            "s3:GetBucketAcl"
+            "s3:GetBucketAcl",
+            "s3:GetBucketCORS"
           ],
           "Resource": [
             "arn:aws:s3:::${var.s3_remote_backend}",
@@ -231,7 +235,8 @@ locals {
             "dynamodb:DescribeTable",
             "dynamodb:DescribeContinuousBackups",
             "dynamodb:DeleteItem",
-            "dynamodb:DescribeTimeToLive" 
+            "dynamodb:DescribeTimeToLive",
+            "dynamodb:ListTagsOfResource" 
           ],
           "Resource": "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.dynamodb_lock_table}"
         }
