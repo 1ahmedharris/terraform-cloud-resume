@@ -245,7 +245,7 @@ locals {
           ],
           "Resource": [
             "arn:aws:lambda:${var.aws_region}:${var.aws_id}:function:${var.lambda_function}",
-            "arn:aws:lambda:${var.aws_region}:${var.aws_id}:function:${var.lambda_function}:*", # For versions/aliases
+            "arn:aws:lambda:${var.aws_region}:${var.aws_id}:function:${var.lambda_function}:*", 
           ]
         },
 
@@ -292,7 +292,7 @@ locals {
           ],
           "Resource": [
             "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
-            "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table/*" # For streams, indexes, etc.
+            "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table/*" 
           ]
         },
 
