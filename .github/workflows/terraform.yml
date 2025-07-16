@@ -30,13 +30,17 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config="bucket=resume-remote-backend" -backend-config="key=terraform.tfstate" -backend-config="region=${{ env.AWS_REGION }}" -backend-config="dynamodb_table=resume-state-lock-table"
+        uses: nick-fields/retry@v3
+        with:
+          timeout_seconds: 60 
+          max_attempts: 3     
+          command: terraform init -backend-config="bucket=resume-remote-backend" -backend-config="key=terraform.tfstate" -backend-config="region=${{ env.AWS_REGION }}" -backend-config="dynamodb_table=resume-state-lock-table"
 
       - name: Terraform Plan 
         id: plan
         uses: nick-fields/retry@v3
         with:
-          timeout_seconds: 10 
+          timeout_seconds: 60 
           max_attempts: 5    
           command: terraform plan -no-color -input=false
  
@@ -44,6 +48,6 @@ jobs:
         id: apply
         uses: nick-fields/retry@v3
         with:
-          timeout_seconds: 10 
+          timeout_seconds: 120 
           max_attempts: 5      
           command: terraform apply -auto-approve
