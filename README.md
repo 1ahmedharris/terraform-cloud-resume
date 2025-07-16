@@ -16,6 +16,6 @@ This repo is my AWS Cloud Resume infrastructure configured in Terraform.
 * s3.tf               Creates S3 bucket to host Cloud Resume website content.
 * lambda.tf           Configures Python Lambda function, IAM roles and permissions, to update DynamoDB visitor count.
 * dynamodb.tf         Provisions DynamoDB table to store website visitor count.
-* remote-backend.tf   Provisions tfstate S3 remote backend  
+* remote-backend.tf   Provisions S3 remote backend tfstate 
 </pre>
 
