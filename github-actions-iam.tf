@@ -1,4 +1,4 @@
-# IAM role github actions ci/cd workflow assumes
+# Github actions IAM role ci/cd workflow permissiond v1.2
 resource "aws_iam_role" "github_actions_resume_role" {
   name                 = "github-actions-resume-role"
   max_session_duration = 3600
@@ -23,13 +23,12 @@ resource "aws_iam_role" "github_actions_resume_role" {
   })
 }
 
-# Permissions for github-actions-resume-policy
+# github-actions-resume-policy Permissions 
 locals {
   github_actions_resume_permissions_json = jsonencode(
     {
       "Version": "2012-10-17",
       "Statement": [
-        # General AWS Account and Region Information
         {
           "Sid": "STSGetCallerIdentity",
           "Effect": "Allow",
@@ -37,8 +36,42 @@ locals {
           "Resource": "*"
         },
 
+        # Terraform IAM Role and Policy Permissions 
         {
-          "Sid": "S3BackendAndLock",
+          "Sid": "IAMSelfManagement",
+          "Effect": "Allow",
+          "Action": [
+            "iam:GetRole",
+            "iam:UpdateAssumeRolePolicy",
+            "iam:PutRolePolicy",
+            "iam:GetRolePolicy",
+            "iam:DeleteRolePolicy", 
+            "iam:AttachRolePolicy",
+            "iam:DetachRolePolicy",
+            "iam:GetPolicy",
+            "iam:GetPolicyVersion",
+            "iam:ListAttachedRolePolicies",
+            "iam:ListRolePolicies",
+            "iam:ListPolicies", 
+            "iam:ListRoles",   
+            "iam:PassRole",    
+            "iam:CreatePolicy", 
+            "iam:DeletePolicy",
+          ],
+          "Resource": [
+            "arn:aws:iam::${var.aws_id}:role/${aws_iam_role.github_actions_resume_role.name}", 
+            "arn:aws:iam::${var.aws_id}:policy/${var.github_actions_iam_policy}", 
+            "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role", 
+            "arn:aws:iam::${var.aws_id}:role/*", 
+            "arn:aws:iam::${var.aws_id}:policy/*", 
+            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+            "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess", 
+          ]
+        },
+
+        # S3 Remote Backend & DynamoDB State Locking Permissions
+        {
+          "Sid": "S3RemoteBackend",
           "Effect": "Allow",
           "Action": [
             "s3:ListBucket",
@@ -47,13 +80,23 @@ locals {
             "s3:DeleteObject",
             "s3:GetBucketAcl",
             "s3:GetBucketPolicy",
-            "s3:PutBucketPolicy", 
+            "s3:PutBucketPolicy",
             "s3:GetBucketCORS",
             "s3:GetBucketLocation",
             "s3:GetBucketVersioning",
             "s3:PutBucketVersioning",
-            "s3:GetBucketWebsite",         
-            "s3:GetBucketRequestPayment",  
+            "s3:GetBucketWebsite",        
+            "s3:GetBucketRequestPayment", 
+          ],
+          "Resource": [
+            "arn:aws:s3:::${var.s3_remote_backend}",
+            "arn:aws:s3:::${var.s3_remote_backend}/*"
+          ]
+        },
+        {
+          "Sid": "DynamoDBLockTable",
+          "Effect": "Allow",
+          "Action": [
             "dynamodb:GetItem",
             "dynamodb:PutItem",
             "dynamodb:DeleteItem",
@@ -62,20 +105,24 @@ locals {
             "dynamodb:DescribeTimeToLive",
             "dynamodb:ListTagsOfResource"
           ],
-          "Resource": [
-            "arn:aws:s3:::${var.s3_remote_backend}",
-            "arn:aws:s3:::${var.s3_remote_backend}/*",
-            "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.dynamodb_lock_table}"
-          ]
+          "Resource": "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.dynamodb_lock_table}"
         },
-        # S3 Management for Website Content Buckets (e.g., aitc-s3 via var.s3_bucket)
+
+        # S3 Permissions
         {
-          "Sid": "S3WebsiteBucketManagement",
+          "Sid": "S3GlobalBucketActions",
           "Effect": "Allow",
           "Action": [
             "s3:CreateBucket",
-            "s3:ListAllMyBuckets", 
-            "s3:GetBucketLocation",
+            "s3:ListAllMyBuckets",
+            "s3:GetBucketLocation"
+          ],
+          "Resource": "*" 
+        },
+        {
+          "Sid": "S3WebsiteBucketConfig",
+          "Effect": "Allow",
+          "Action": [
             "s3:GetBucketAcl",
             "s3:PutBucketAcl",
             "s3:GetBucketPolicy",
@@ -93,7 +140,7 @@ locals {
             "s3:DeleteBucketWebsite",
             "s3:GetAccelerateConfiguration",
             "s3:PutAccelerateConfiguration",
-            "s3:GetBucketRequestPayment",
+            "s3:GetBucketRequestPayment", 
             "s3:PutBucketRequestPayment",
             "s3:GetBucketPublicAccessBlock",
             "s3:PutBucketPublicAccessBlock",
@@ -108,16 +155,12 @@ locals {
             "s3:GetLifecycleConfiguration",
             "s3:DeleteLifecycleConfiguration",
             "s3:ListBucket", 
-            "s3:DeleteBucket",
+            "s3:DeleteBucket", 
           ],
-          "Resource": [
-            "arn:aws:s3:::*", 
-            "arn:aws:s3:::${var.s3_bucket}" 
-          ]
+          "Resource": "arn:aws:s3:::${var.s3_bucket}"
         },
-
         {
-          "Sid": "S3WebsiteObjectManagement",
+          "Sid": "S3WebsiteObjectAccess",
           "Effect": "Allow",
           "Action": [
             "s3:PutObject",
@@ -125,11 +168,12 @@ locals {
             "s3:DeleteObject",
             "s3:ListMultipartUploadParts",
             "s3:AbortMultipartUpload",
-            "s3:GetObjectVersion", 
+            "s3:GetObjectVersion",
           ],
           "Resource": "arn:aws:s3:::${var.s3_bucket}/*"
         },
- 
+
+        # Cloudfront Permissions 
         {
           "Sid": "CloudFrontManagement",
           "Effect": "Allow",
@@ -148,13 +192,14 @@ locals {
             "cloudfront:GetCachePolicy",
             "cloudfront:ListCachePolicies",
             "cloudfront:CreateInvalidation",
+            "cloudfront:GetInvalidation", 
+            "cloudfront:ListInvalidations",
             "cloudfront:ListTagsForResource",
             "cloudfront:TagResource",
             "cloudfront:UntagResource",
           ],
           "Resource": "*" 
         },
-        # ACM Certificate Reading (for CloudFront SSL)
         {
           "Sid": "ACMRead",
           "Effect": "Allow",
@@ -165,6 +210,7 @@ locals {
           "Resource": "*" 
         },
 
+        # Lambda Permissions 
         {
           "Sid": "LambdaFunctionManagement",
           "Effect": "Allow",
@@ -199,44 +245,11 @@ locals {
           ],
           "Resource": [
             "arn:aws:lambda:${var.aws_region}:${var.aws_id}:function:${var.lambda_function}",
-            "arn:aws:lambda:${var.aws_region}:${var.aws_id}:function:${var.lambda_function}:*" 
+            "arn:aws:lambda:${var.aws_region}:${var.aws_id}:function:${var.lambda_function}:*", # For versions/aliases
           ]
         },
 
-        {
-          "Sid": "IAMRoleAndPolicyManagement",
-          "Effect": "Allow",
-          "Action": [
-            "iam:CreateRole",
-            "iam:GetRole",
-            "iam:UpdateAssumeRolePolicy",
-            "iam:PutRolePolicy",
-            "iam:GetRolePolicy",
-            "iam:DeleteRolePolicy",
-            "iam:AttachRolePolicy",
-            "iam:DetachRolePolicy",
-            "iam:DeleteRole",
-            "iam:ListAttachedRolePolicies",
-            "iam:ListRolePolicies",
-            "iam:ListRoles",
-            "iam:GetPolicy",
-            "iam:GetPolicyVersion",
-            "iam:ListPolicies",
-            "iam:CreatePolicy",
-            "iam:DeletePolicy", 
-            "iam:CreatePolicyVersion", 
-            "iam:DeletePolicyVersion",
-            "iam:PassRole" 
-          ],
-          "Resource": [
-            "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role",
-            "arn:aws:iam::${var.aws_id}:role/*", 
-            "arn:aws:iam::${var.aws_id}:policy/*",
-            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-            "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
-          ]
-        },
-
+        # Cloudwatch Permissions
         {
           "Sid": "CloudWatchLogsManagement",
           "Effect": "Allow",
@@ -255,6 +268,7 @@ locals {
           "Resource": "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:*"
         },
 
+        # DynamoDB Permissions
         {
           "Sid": "DynamoDBTableManagement",
           "Effect": "Allow",
@@ -263,7 +277,7 @@ locals {
             "dynamodb:DescribeTable",
             "dynamodb:UpdateTable",
             "dynamodb:DeleteTable",
-            "dynamodb:ListTables", 
+            "dynamodb:ListTables",
             "dynamodb:DescribeContinuousBackups",
             "dynamodb:UpdateTimeToLive",
             "dynamodb:DescribeTimeToLive",
@@ -273,15 +287,16 @@ locals {
             "dynamodb:UntagResource",
             "dynamodb:GetItem",
             "dynamodb:PutItem",
-            "dynamodb:UpdateItem", 
-            "dynamodb:DeleteItem", 
+            "dynamodb:UpdateItem",
+            "dynamodb:DeleteItem",
           ],
           "Resource": [
             "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
-            "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table/*"
+            "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table/*" # For streams, indexes, etc.
           ]
         },
 
+        # Route53 Permissions
         {
           "Sid": "Route53Management",
           "Effect": "Allow",
@@ -298,7 +313,7 @@ locals {
             "route53:UntagResource",
           ],
           "Resource": [
-            "arn:aws:route53:::hostedzone/*", 
+            "arn:aws:route53:::hostedzone/*",
             "arn:aws:route53:::hostedzone/${var.main_resume_hosted_zone}",
             "arn:aws:route53:::hostedzone/${var.devops_resume_hosted_zone}",
           ]
