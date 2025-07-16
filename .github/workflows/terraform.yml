@@ -10,10 +10,10 @@ jobs:
     name: 'Terraform Plan & Apply'
     runs-on: ubuntu-latest
     permissions:
-      id-token: write 
-      contents: read  
+      id-token: write
+      contents: read
     env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_REGION: ${{ secrets.AWS_REGION }} 
 
     steps:
       - name: Checkout Repository
@@ -22,20 +22,28 @@ jobs:
       - name: Configure AWS Credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-resume-role
-          aws-region: ${{ secrets.AWS_REGION }} 
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-resume-role 
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         id: init
-        run: terraform init -reconfigure -backend-config="bucket=resume-remote-backend" -backend-config="key=terraform.tfstate" -backend-config="region=${{ env.AWS_REGION }}" -backend-config="dynamodb_table=resume-state-lock-table"
+        run: terraform init -backend-config="bucket=resume-remote-backend" -backend-config="key=terraform.tfstate" -backend-config="region=${{ env.AWS_REGION }}" -backend-config="dynamodb_table=resume-state-lock-table"
 
-      - name: Terraform Plan
+      - name: Terraform Plan 
         id: plan
-        run: terraform plan -no-color
-        
-      - name: Terraform Apply
+        uses: nick-fields/retry@v3
+        with:
+          timeout_seconds: 10 
+          max_attempts: 5    
+          command: terraform plan -no-color -input=false
+ 
+      - name: Terraform Apply 
         id: apply
-        run: terraform apply -auto-approve
+        uses: nick-fields/retry@v3
+        with:
+          timeout_seconds: 10 
+          max_attempts: 5      
+          command: terraform apply -auto-approve
