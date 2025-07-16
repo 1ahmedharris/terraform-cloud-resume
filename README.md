@@ -7,7 +7,7 @@ This repo is my AWS Cloud Resume infrastructure configured in Terraform.
 * Cloud: AWS, Route 53, CloudFront, S3, Lamba, DynamoDB, CloudWatch
 * Remote Backend: S3
 * Version Control: Git
-* CI/CD Pipepline: GitHub Actions
+* CI/CD Pipeline: GitHub Actions
 
 <pre>
 **Architecture** 
