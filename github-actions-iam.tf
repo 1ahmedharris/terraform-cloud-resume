@@ -23,7 +23,7 @@ resource "aws_iam_role" "github_actions_resume_role" {
   })
 }
 
-# permissions for github-actions-resume-policy  
+# Permissions for github-actions-resume-policy
 locals {
   github_actions_resume_permissions_json = jsonencode(
     {
@@ -46,9 +46,9 @@ locals {
             "acm:DescribeCertificate",
             "acm:ListCertificates",
             "cloudfront:CreateInvalidation",
-            "cloudfront:ListCachePolicies" 
+            "cloudfront:ListCachePolicies"
           ],
-          "Resource": "*" 
+          "Resource": "*"
         },
         {
           "Sid": "S3BucketCreation",
@@ -58,7 +58,7 @@ locals {
             "s3:ListAllMyBuckets",
             "s3:GetBucketLocation"
           ],
-          "Resource": "*" 
+          "Resource": "*"
         },
         {
           "Sid": "S3BucketConfiguration",
@@ -72,7 +72,8 @@ locals {
             "s3:GetBucketVersioning",
             "s3:PutBucketVersioning",
             "s3:ListBucket",
-            "s3:GetBucketCORS" 
+            "s3:GetBucketCORS",
+            "s3:GetBucketWebsite" 
           ],
           "Resource": "arn:aws:s3:::${var.s3_bucket}"
         },
@@ -89,7 +90,7 @@ locals {
           "Sid": "STSCallerIdentity",
           "Effect": "Allow",
           "Action": "sts:GetCallerIdentity",
-          "Resource": "*" 
+          "Resource": "*"
         },
         {
           "Sid": "LambdaIAMGlobalActions",
@@ -98,10 +99,12 @@ locals {
             "iam:CreateRole",
             "iam:ListPolicies",
             "iam:ListRoles",
-            "iam:GetRole",   
-            "iam:GetPolicy" 
+            "iam:GetRole",
+            "iam:GetPolicy",
+            "iam:ListRolePolicies",  
+            "iam:GetPolicyVersion"   
           ],
-          "Resource": "*" 
+          "Resource": "*"
         },
         {
           "Sid": "LambdaRoleManagement",
@@ -113,7 +116,7 @@ locals {
             "iam:GetRolePolicy",
             "iam:AttachRolePolicy",
             "iam:ListAttachedRolePolicies",
-            "iam:ListRolePolicies" 
+            "iam:ListRolePolicies"
           ],
           "Resource": "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role"
         },
@@ -122,7 +125,7 @@ locals {
           "Effect": "Allow",
           "Action": [
             "iam:GetPolicy",
-            "iam:GetPolicyVersion" 
+            "iam:GetPolicyVersion"
           ],
           "Resource": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         },
@@ -158,7 +161,8 @@ locals {
           "Effect": "Allow",
           "Action": [
             "logs:CreateLogGroup",
-            "logs:DescribeLogGroups"
+            "logs:DescribeLogGroups",
+            "logs:ListTagsForResource" 
           ],
           "Resource": "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:*"
         },
@@ -170,7 +174,8 @@ locals {
             "dynamodb:DescribeTable",
             "dynamodb:UpdateTable",
             "dynamodb:ListTables",
-            "dynamodb:DescribeContinuousBackups" 
+            "dynamodb:DescribeContinuousBackups",
+            "dynamodb:DescribeTimeToLive" 
           ],
           "Resource": [
             "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
@@ -185,7 +190,7 @@ locals {
             "route53:ListHostedZones",
             "route53:GetChange"
           ],
-          "Resource": "*" 
+          "Resource": "*"
         },
         {
           "Sid": "Route53ZoneAndRecordManagement",
@@ -208,8 +213,9 @@ locals {
             "s3:ListBucket",
             "s3:GetObject",
             "s3:PutObject",
-            "s3:GetBucketPolicy", 
-            "s3:DeleteObject"     
+            "s3:GetBucketPolicy",
+            "s3:DeleteObject",
+            "s3:GetBucketAcl"
           ],
           "Resource": [
             "arn:aws:s3:::${var.s3_remote_backend}",
@@ -224,7 +230,8 @@ locals {
             "dynamodb:PutItem",
             "dynamodb:DescribeTable",
             "dynamodb:DescribeContinuousBackups",
-            "dynamodb:DeleteItem"              
+            "dynamodb:DeleteItem",
+            "dynamodb:DescribeTimeToLive" 
           ],
           "Resource": "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.dynamodb_lock_table}"
         }
@@ -234,7 +241,7 @@ locals {
 }
 
 resource "aws_iam_policy" "github_actions_resume_policy" {
-  name        = var.github_actions_iam_policy 
+  name        = var.github_actions_iam_policy
   policy      = local.github_actions_resume_permissions_json
 }
 
