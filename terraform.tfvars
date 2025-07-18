@@ -5,6 +5,7 @@ acm_certificate_arn         = "arn:aws:acm:us-east-1:941377150270:certificate/7a
 cloudfront_web_acl_arn      = "arn:aws:wafv2:us-east-1:941377150270:global/webacl/CreatedByCloudFront-e5fddf7d-adfe-47d9-ac30-9c4f2c4f22f3/257fcf48-1155-4387-b2ff-7ca6be751f8e"
 cloudfront_restriction_type = "blacklist"
 aws_id                      = "941377150270"
+visitor_count_table         = "visitor-count-table"
 lambda_function             = "aitc-lamba-function"
 lambda_counter_zip          = "build/lambda_counter.zip"
 main_resume_hosted_zone     = "Z01018062M98VOF9SUSIM"
@@ -14,11 +15,8 @@ main_resume_subdomain       = "www.ahmedharrisresume.com"
 devops_resume_domain_name   = "ahmedharrisdevops.com"
 devops_resume_subdomain     = "www.ahmedharrisdevops.com"
 s3_remote_backend           = "resume-remote-backend"
-dynamodb_lock_table         = "resume-state-lock-table"
 github_org_name             = "1ahmedharris" 
 github_repo_name            = "terraform-cloud-resume" 
-github_actions_iam_policy   = "github-actions-resume-policy"
-
 cloudfront_restriction_locations = [
   "AL", "AM", "AR", "AT", "AU", "BE", "BG",
   "BR", "BY", "CH", "CI", "CN", "CY", "CZ",
