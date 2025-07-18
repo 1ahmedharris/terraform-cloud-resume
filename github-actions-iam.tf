@@ -94,7 +94,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:GetBucketTagging",
           "s3:ListBucket",
           "s3:GetBucketAcl",
-          "s3:GetBucketCORS"
+          "s3:GetBucketCORS",
+          "s3:GetBucketWebsite"
         ],
         Resource = "*"
       },
@@ -112,7 +113,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:GetBucketVersioning",
           "s3:PutEncryptionConfiguration",
           "s3:GetEncryptionConfiguration",
-          "s3:GetBucketAcl"
+          "s3:GetBucketAcl",
+          "s3:GetBucketWebsite"
         ],
         Resource = "arn:aws:s3:::${var.s3_bucket}"
       },
