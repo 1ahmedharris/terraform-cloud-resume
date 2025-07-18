@@ -21,6 +21,9 @@ resource "aws_iam_role" "github_actions_resume_role" {
   })
 }
 
+
+
+
 resource "aws_iam_policy" "github_actions_resume_policy" {
   name        = "github-actions-resume-policy"
   description = "Policy allowing GitHub Actions to provision infrastructure for cloud resume and backend"
@@ -42,17 +45,26 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Action = [
           "iam:GetRole",
           "iam:GetRolePolicy",
-          "iam:GetPolicy",
-          "iam:ListRolePolicies",
-          "iam:ListAttachedRolePolicies",
+          "iam:ListRolePolicies"
         ],
         Resource = [
-          "arn:aws:iam::${var.aws_id}:role/*",
+          "arn:aws:iam::${var.aws_id}:role/*"
         ]
       },
 
       {
-        Effect = "Allow"
+        Effect = "Allow",
+        Action = [
+          "iam:ListAttachedRolePolicies"
+        ],
+        Resource = [
+          "arn:aws:iam::${var.aws_id}:role/github-actions-resume-role",
+          "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role"
+        ]
+      },
+
+      {
+        Effect = "Allow",
         Action = [
           "iam:GetPolicy"
         ],
@@ -63,7 +75,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       },
 
       {
-        Effect = "Allow"
+        Effect = "Allow",
         Action = [
           "cloudfront:ListTagsForResource"
         ],
@@ -141,16 +153,16 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       },
 
       {
-      Effect = "Allow",
-      Action = [
-        "s3:GetObject",
-        "s3:PutObject",
-        "s3:DeleteObject",
-        "s3:ListBucket"
+        Effect = "Allow",
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
         ],
         Resource = [
-          "arn:aws:s3:::resume-remote-backend",        
-          "arn:aws:s3:::resume-remote-backend/*"      
+          "arn:aws:s3:::resume-remote-backend",
+          "arn:aws:s3:::resume-remote-backend/*"
         ]
       },
 
@@ -246,8 +258,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "logs:PutLogEvents"
         ],
         Resource = "*"
-      },
-
+      }
     ]
   })
 }
@@ -256,3 +267,5 @@ resource "aws_iam_role_policy_attachment" "github_actions_resume_policy_attachme
   role       = aws_iam_role.github_actions_resume_role.name
   policy_arn = aws_iam_policy.github_actions_resume_policy.arn
 }
+
+
