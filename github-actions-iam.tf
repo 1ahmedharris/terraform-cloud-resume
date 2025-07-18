@@ -206,7 +206,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:ListAllMyBuckets"
         ],
         "Resource": "*"
-      }
+      },
 
       # CloudWatch Logs for Lambda
       {
