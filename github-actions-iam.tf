@@ -44,10 +44,30 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "iam:GetRolePolicy",
           "iam:GetPolicy",
           "iam:ListRolePolicies",
+          "iam:ListAttachedRolePolicies",
         ],
         Resource = [
           "arn:aws:iam::${var.aws_id}:role/*",
         ]
+      },
+
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:GetPolicy"
+        ],
+        Resource = [
+          "arn:aws:iam::${var.aws_id}:policy/github-actions-resume-policy",
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        ]
+      },
+
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudfront:ListTagsForResource"
+        ],
+        Resource = "arn:aws:cloudfront::${var.aws_id}:distribution/E11U5R2YIBF4OY"
       },
 
       # CloudFront permissions
@@ -173,6 +193,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "dynamodb:GetItem",
           "dynamodb:PutItem",
           "dynamodb:DescribeTable",
+          "dynamodb:DescribeContinuousBackups",
           "dynamodb:DeleteItem"
         ],
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.visitor_count_table}"
@@ -184,7 +205,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Action = [
           "route53:CreateHostedZone",
           "route53:DeleteHostedZone",
-          "route53:GetHostedZone",
+          "route53:GetHostedZone"
         ],
         Resource = "*"
       },
@@ -212,7 +233,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Effect = "Allow",
         Action = [
           "logs:ListTagsForResource"
-        ]
+        ],
         Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:/aws/lambda/aitc-lamba-function"
       },
 
