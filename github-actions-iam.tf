@@ -209,8 +209,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "dynamodb:DescribeTable",
           "dynamodb:DeleteItem",
           "dynamodb:ListTables",
-          "dynamodb:DescribeContinuousBackups",
-          "dynamodb:ListTagsOfResource",
+          "dynamodb:DescribeContinuousBackups"
         ],
         Resource = [
           "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
