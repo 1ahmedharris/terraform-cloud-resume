@@ -32,55 +32,18 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
     Version = "2012-10-17",
     Statement = [
 
-      {
-        Effect = "Allow",
-        Action = [
-          "iam:ListPolicies"
-        ],
-        Resource = "*"
-      },
 
       {
         Effect = "Allow",
         Action = [
           "iam:GetRole",
-          "iam:GetRolePolicy",
-          "iam:ListRolePolicies"
+          "iam:GetRolePolicy"
         ],
         Resource = [
           "arn:aws:iam::${var.aws_id}:role/*"
         ]
       },
 
-      {
-        Effect = "Allow",
-        Action = [
-          "iam:ListAttachedRolePolicies"
-        ],
-        Resource = [
-          "arn:aws:iam::${var.aws_id}:role/github-actions-resume-role",
-          "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role"
-        ]
-      },
-
-      {
-        Effect = "Allow",
-        Action = [
-          "iam:GetPolicy"
-        ],
-        Resource = [
-          "arn:aws:iam::${var.aws_id}:policy/github-actions-resume-policy",
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-        ]
-      },
-
-      {
-        Effect = "Allow",
-        Action = [
-          "cloudfront:ListTagsForResource"
-        ],
-        Resource = "arn:aws:cloudfront::${var.aws_id}:distribution/E11U5R2YIBF4OY"
-      },
 
       # CloudFront permissions
       {
@@ -201,12 +164,9 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       {
         Effect = "Allow",
         Action = [
-          "dynamodb:UpdateTable",
           "dynamodb:GetItem",
           "dynamodb:PutItem",
-          "dynamodb:DescribeTable",
-          "dynamodb:DescribeContinuousBackups",
-          "dynamodb:DeleteItem"
+          "dynamodb:Query"
         ],
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.visitor_count_table}"
       },
