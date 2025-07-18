@@ -29,6 +29,21 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
     Version = "2012-10-17",
     Statement = [
 
+
+      {
+        Effect = "Allow",
+        Action = [
+          "iam:GetRole",
+          "iam:GetPolicy",
+          "iam:ListPolicies"
+        ],
+        Resource = [
+          "arn:aws:iam::${var.aws_id}:role/github-actions-resume-role",
+          "arn:aws:iam::${var.aws_id}:role/lambda-dynamodb-role",
+          "arn:aws:iam::${var.aws_id}:policy/github-actions-resume-policy"
+        ]
+      },
+
       # CloudFront permissions
       {
         Effect = "Allow",
@@ -47,6 +62,14 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "cloudfront:ListCachePolicies"
         ],
         Resource = "*"
+      },
+
+      {
+        Effect = "Allow",
+        Action = [
+          "cloudfront:ListTagsForResource"
+        ],
+        Resource = "arn:aws:cloudfront::${var.aws_id}:distribution/*"
       },
 
       # ACM
@@ -100,6 +123,14 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:AbortMultipartUpload"
         ],
         Resource = "arn:aws:s3:::${var.s3_bucket}/*"
+      },
+
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:ListAllMyBuckets"
+        ],
+        Resource = "*"
       },
 
       {
@@ -173,7 +204,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "dynamodb:Query",
           "dynamodb:GetItem",
           "dynamodb:PutItem",
-          "dynamodb:UpdateItem",
+          "dynamodb:DescribeContinuousBackups",
           "dynamodb:DeleteItem"
         ],
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.visitor_count_table}"
@@ -194,18 +225,21 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       },
 
       {
-        "Effect": "Allow",
-        "Action": [
-          "cloudfront:ListTagsForResource",
-          "dynamodb:DescribeContinuousBackups",
-          "iam:GetRole",
-          "iam:GetPolicy",
-          "iam:ListPolicies",
-          "logs:DescribeLogGroups",
-          "route53:ListTagsForResource",
-          "s3:ListAllMyBuckets"
+        Effect = "Allow",
+        Action = [
+          "route53:ListTagsForResource"
         ],
-        "Resource": "*"
+        Resource = [
+        "arn:aws:route53:::hostedzone/*"
+        ]
+      },
+
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:DescribeLogGroups"
+        ],
+        Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:*"
       },
 
       # CloudWatch Logs for Lambda
