@@ -113,8 +113,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:GetBucketVersioning",
           "s3:PutEncryptionConfiguration",
           "s3:GetEncryptionConfiguration",
-          "s3:GetBucketAcl",
-          "s3:GetBucketWebsite"
+          "s3:GetBucketAcl"
         ],
         Resource = "arn:aws:s3:::${var.s3_bucket}"
       },
@@ -194,13 +193,24 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       {
         Effect = "Allow",
         Action = [
+          "dynamodb:ListTagsOfResource",
+        ],
+        Resource = [
+          "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/*"
+        ]
+      },
+
+      {
+        Effect = "Allow",
+        Action = [
           "dynamodb:UpdateTable",
           "dynamodb:GetItem",
           "dynamodb:PutItem",
           "dynamodb:DescribeTable",
           "dynamodb:DeleteItem",
           "dynamodb:ListTables",
-          "dynamodb:DescribeContinuousBackups"
+          "dynamodb:DescribeContinuousBackups",
+          "dynamodb:ListTagsOfResource",
         ],
         Resource = [
           "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
