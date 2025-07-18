@@ -230,7 +230,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "route53:CreateHostedZone",
           "route53:DeleteHostedZone",
           "route53:GetHostedZone",
-          "route53:ListTagsForResource"
+          "route53:ListTagsForResource",
+          "route53:ListResourceRecordSets"
         ],
         Resource = "*"
       },
