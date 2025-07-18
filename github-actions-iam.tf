@@ -34,16 +34,14 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Effect = "Allow",
         Action = [
           "iam:GetRole",
+          "iam:GetRolePolicy",
           "iam:GetPolicy",
           "iam:GetPolicyVersion",
           "iam:ListRolePolicies",
           "iam:ListPolicies",
-          "iam:GetRole"
         ],
         Resource = [
-          "arn:aws:iam::${var.aws_id}:role/github-actions-resume-role",
-          "arn:aws:iam::${var.aws_id}:role/lambda-dynamodb-role",
-          "arn:aws:iam::${var.aws_id}:policy/github-actions-resume-policy"
+          "arn:aws:iam::${var.aws_id}:role/*",
         ]
       },
 
@@ -255,6 +253,14 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "logs:PutLogEvents"
         ],
         Resource = "*"
+      },
+      
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:ListTagsForResource"
+        ],
+        Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:/aws/lambda/aitc-lamba-function"
       },
 
       {
