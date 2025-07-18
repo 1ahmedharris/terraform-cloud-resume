@@ -193,6 +193,21 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Resource = "*"
       },
 
+      {
+        "Effect": "Allow",
+        "Action": [
+          "cloudfront:ListTagsForResource",
+          "dynamodb:DescribeContinuousBackups",
+          "iam:GetRole",
+          "iam:GetPolicy",
+          "iam:ListPolicies",
+          "logs:DescribeLogGroups",
+          "route53:ListTagsForResource",
+          "s3:ListAllMyBuckets"
+        ],
+        "Resource": "*"
+      }
+
       # CloudWatch Logs for Lambda
       {
         Effect = "Allow",
