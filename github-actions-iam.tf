@@ -47,7 +47,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "iam:ListAttachedRolePolicies",
           "iam:GetPolicyVersion",
           "iam:ListPolicyVersions",
-          "iam:DeletePolicyVersion"
+          "iam:DeletePolicyVersion",
+          "iam:CreatePolicyVersion"
         ],
         Resource = "*"
       },
