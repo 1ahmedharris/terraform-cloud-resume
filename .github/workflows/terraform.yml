@@ -1,20 +1,19 @@
 name: Provision Terraform Cloud Resume Infrastructure
-
 on:
   push:
     branches:
       - main
+env:
+  AWS_REGION : "AWS-REGION"
 
+permissions:
+  id-token: write 
+  contents: read  
+  
 jobs:
   terraform:
-    name: 'Terraform Plan & Apply'
+    name: 'Terraform Apply'
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    env:
-      AWS_REGION: ${{ secrets.AWS_REGION }} 
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -22,32 +21,20 @@ jobs:
       - name: Configure AWS Credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-resume-role 
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-resume-role
+          aws-region: ${{ secrets.AWS_REGION }} 
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         id: init
-        uses: nick-fields/retry@v3
-        with:
-          timeout_seconds: 60 
-          max_attempts: 3     
-          command: terraform init -backend-config="bucket=resume-remote-backend" -backend-config="key=terraform.tfstate" -backend-config="region=${{ env.AWS_REGION }}" -backend-config="dynamodb_table=resume-state-lock-table"
+        run: terraform init
 
-      - name: Terraform Plan 
+      - name: Terraform Plan
         id: plan
-        uses: nick-fields/retry@v3
-        with:
-          timeout_seconds: 60 
-          max_attempts: 5    
-          command: terraform plan -no-color -input=false
- 
-      - name: Terraform Apply 
+        run: terraform plan -no-color
+
+      - name: Terraform Apply
         id: apply
-        uses: nick-fields/retry@v3
-        with:
-          timeout_seconds: 120 
-          max_attempts: 5      
-          command: terraform apply -auto-approve
+        run: terraform apply -auto-approve
