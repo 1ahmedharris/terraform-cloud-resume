@@ -1,6 +1,3 @@
-# working final s3.tf with local s3 object management and object map to retrieve site content pointing to local project directory,
-# all future s3.tf configs remove terraform S3 object management, removing resource "aws_s3_object" "website_files" {} and locals {}
-
 data "aws_caller_identity" "current" {}
 
 data "aws_canonical_user_id" "current" {}
@@ -10,7 +7,7 @@ resource "aws_s3_bucket" "bucket_config" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_config_sse" {
-  bucket = aws_s3_bucket.bucket_config.id
+  bucket = var.s3_bucket
   
   rule {
     bucket_key_enabled = true 
@@ -21,7 +18,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_config_sse
 }
 
 resource "aws_s3_bucket_versioning" "bucket_config_versioning" {
-  bucket = aws_s3_bucket.bucket_config.id
+  bucket = var.s3_bucket
 
   versioning_configuration {
     status     = "Enabled"
@@ -30,7 +27,7 @@ resource "aws_s3_bucket_versioning" "bucket_config_versioning" {
 }
 
 resource "aws_s3_bucket_policy" "bucket_config_policy" {
-  bucket = aws_s3_bucket.bucket_config.id
+  bucket = var.s3_bucket
 
   policy = jsonencode(
     {
@@ -54,41 +51,4 @@ resource "aws_s3_bucket_policy" "bucket_config_policy" {
       ]
     }
   )
-}
-
-# Defines site local filepath values 
-locals {
-  files = fileset(var.website_content_path, "**/*")
-  object_map = {
-    for file in local.files :
-    file => {
-      source_path  = "${var.website_content_path}/${file}" 
-      content_type = lookup(
-        {
-          "html" : "text/html",
-          "css" : "text/css",
-          "png" : "image/png",
-          "jpg" : "image/jpeg",
-          "jpeg" : "image/jpeg", 
-          "ico" : "image/x-icon", 
-        },
-        split(".", file)[length(split(".", file)) - 1], # Extract the file extension from the file name
-        "application/octet-stream" # Default if extension not found in map
-      )
-    }
-  }
-}
-
-# Creates an s3 object resource for each file found in the locals object_map.
-resource "aws_s3_object" "website_files" {
-  for_each = local.object_map 
-  bucket = aws_s3_bucket.bucket_config.id 
-  key    = each.key                       
-  source = each.value.source_path        
-  content_type = each.value.content_type
-  etag = filemd5(each.value.source_path)  # File change detection 
-
-  lifecycle {
-  prevent_destroy = true
-  }
 }
