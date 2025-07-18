@@ -115,7 +115,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:GetEncryptionConfiguration",
           "s3:GetBucketAcl",
           "s3:GetAccelerateConfiguration",
-          "s3:GetBucketRequestPayment"
+          "s3:GetBucketRequestPayment",
+          "s3:GetBucketLogging"
         ],
         Resource = "arn:aws:s3:::${var.s3_bucket}"
       },
