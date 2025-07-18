@@ -102,17 +102,17 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Resource = "arn:aws:s3:::${var.s3_bucket}/*"
       },
 
-      # S3 remote backend tfstate/tflock 
       {
-        Effect = "Allow",
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject"
+      Effect = "Allow",
+      Action = [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:ListBucket"
         ],
         Resource = [
-          "arn:aws:s3:::${var.s3_remote_backend}/terraform.tfstate",
-          "arn:aws:s3:::${var.s3_remote_backend}/terraform.tflock"
+          "arn:aws:s3:::resume-remote-backend",        
+          "arn:aws:s3:::resume-remote-backend/*"      
         ]
       },
 
