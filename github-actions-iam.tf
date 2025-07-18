@@ -28,12 +28,22 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
+
+      {
+        Effect = "Allow",
+        Action = [
+          "iam:ListPolicies"
+        ],
+        Resource = "*"
+      },
+
       {
         Effect = "Allow",
         Action = [
           "iam:GetRole",
           "iam:GetRolePolicy",
-          "iam:GetPolicy"
+          "iam:GetPolicy",
+          "iam:ListRolePolicies",
         ],
         Resource = [
           "arn:aws:iam::${var.aws_id}:role/*",
@@ -47,6 +57,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "cloudfront:UpdateDistribution",
           "cloudfront:GetDistribution",
           "cloudfront:CreateInvalidation",
+          "cloudfront:ListCachePolicies",
           "cloudfront:GetDistributionConfig",
           "cloudfront:GetOriginAccessControl",
           "cloudfront:GetCachePolicy"
@@ -71,6 +82,14 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "wafv2:ListWebACLs"
         ],
         Resource = "${var.cloudfront_web_acl_arn}"
+      },
+
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:ListAllMyBuckets"
+        ],
+        Resource = "*"
       },
 
       # S3 bucket permissions
@@ -153,6 +172,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "dynamodb:UpdateTable",
           "dynamodb:GetItem",
           "dynamodb:PutItem",
+          "dynamodb:DescribeTable",
           "dynamodb:DeleteItem"
         ],
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.visitor_count_table}"
@@ -172,9 +192,28 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       {
         Effect = "Allow",
         Action = [
+          "route53:ListTagsForResource"
+        ],
+        Resource = [
+          "arn:aws:route53:::hostedzone/Z01018062M98VOF9SUSIM",
+          "arn:aws:route53:::hostedzone/Z056701228ISTWPXZ137W"
+        ]
+      },
+
+      {
+        Effect = "Allow",
+        Action = [
           "logs:DescribeLogGroups"
         ],
         Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:*"
+      },
+
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:ListTagsForResource"
+        ]
+        Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:/aws/lambda/aitc-lamba-function"
       },
 
       # CloudWatch Logs for Lambda
