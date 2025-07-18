@@ -95,7 +95,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:ListBucket",
           "s3:GetBucketAcl",
           "s3:GetBucketCORS",
-          "s3:GetBucketWebsite"
+          "s3:GetBucketWebsite",
+          "s3:GetAccelerateConfiguration"
         ],
         Resource = "*"
       },
@@ -159,7 +160,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "lambda:ListTags",
           "lambda:ListFunctions",
           "lambda:ListVersionsByFunction",
-          "lambda:ListAliases"
+          "lambda:ListAliases",
+          "lambda:GetFunctionCodeSigningConfig"
         ],
         Resource = "*"
       },
