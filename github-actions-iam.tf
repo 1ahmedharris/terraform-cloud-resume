@@ -35,7 +35,10 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Action = [
           "iam:GetRole",
           "iam:GetPolicy",
-          "iam:ListPolicies"
+          "iam:GetPolicyVersion",
+          "iam:ListRolePolicies",
+          "iam:ListPolicies",
+          "iam:GetRole"
         ],
         Resource = [
           "arn:aws:iam::${var.aws_id}:role/github-actions-resume-role",
@@ -205,6 +208,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "dynamodb:GetItem",
           "dynamodb:PutItem",
           "dynamodb:DescribeContinuousBackups",
+          "dynamodb:DescribeTimeToLive",
           "dynamodb:DeleteItem"
         ],
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.visitor_count_table}"
@@ -251,6 +255,12 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "logs:PutLogEvents"
         ],
         Resource = "*"
+      },
+
+      {
+        Effect = "Allow",
+        Action = ["logs:ListTagsForResource"],
+        Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:/aws/lambda/*"
       }
     ]
   })
