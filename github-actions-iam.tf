@@ -45,6 +45,18 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       },
 
 
+      {
+        Effect = "Allow",
+        Action = [
+          "iam:GetPolicy"
+        ],
+        Resource = [
+          "arn:aws:iam::${var.aws_id}:policy/github-actions-resume-policy",
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        ]
+      },
+
+
       # CloudFront permissions
       {
         Effect = "Allow",
@@ -164,9 +176,10 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       {
         Effect = "Allow",
         Action = [
+          "dynamodb:UpdateTable",
           "dynamodb:GetItem",
           "dynamodb:PutItem",
-          "dynamodb:Query"
+          "dynamodb:DeleteItem"
         ],
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.visitor_count_table}"
       },
