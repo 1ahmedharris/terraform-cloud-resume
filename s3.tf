@@ -1,3 +1,6 @@
+# working final s3.tf with local s3 object management and object map to retrieve site content pointing to local project directory,
+# all future s3.tf configs remove terraform S3 object management, removing resource "aws_s3_object" "website_files" {} and locals {}
+
 data "aws_caller_identity" "current" {}
 
 data "aws_canonical_user_id" "current" {}
@@ -84,4 +87,8 @@ resource "aws_s3_object" "website_files" {
   source = each.value.source_path        
   content_type = each.value.content_type
   etag = filemd5(each.value.source_path)  # File change detection 
+
+  lifecycle {
+  prevent_destroy = true
+  }
 }
