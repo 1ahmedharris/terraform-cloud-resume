@@ -30,7 +30,6 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
-      # IAM related permissions
       {
         Effect = "Allow",
         Action = [
@@ -38,7 +37,6 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         ],
         Resource = "*"
       },
-
       {
         Effect = "Allow",
         Action = [
@@ -49,12 +47,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "iam:ListAttachedRolePolicies",
           "iam:GetPolicyVersion"
         ],
-        Resource = [
-          "arn:aws:iam::${var.aws_id}:role/github-actions-resume-role",
-          "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role",
-          "arn:aws:iam::${var.aws_id}:policy/github-actions-resume-policy",
-          "arn:aws:iam::${var.aws_id}:policy/service-role/AWSLambdaBasicExecutionRole"
-        ]
+        Resource = "*"
       },
 
       # CloudFront permissions
@@ -70,14 +63,15 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "cloudfront:GetOriginAccessControl",
           "cloudfront:GetCachePolicy"
         ],
-        Resource = "arn:aws:cloudfront::${var.aws_id}:distribution/E11U5R2YIBF4OY"
+        Resource = "*"
       },
 
       # ACM
       {
         Effect = "Allow",
         Action = [
-          "acm:DescribeCertificate"
+          "acm:DescribeCertificate",
+          "acm:ListTagsForResource" 
         ],
         Resource = "${var.acm_certificate_arn}"
       },
@@ -87,7 +81,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Effect = "Allow",
         Action = [
           "wafv2:GetWebACL",
-          "wafv2:ListWebACLs"
+          "wafv2:ListWebACLs",
+          "wafv2:ListTagsForResource" 
         ],
         Resource = "${var.cloudfront_web_acl_arn}"
       },
@@ -97,7 +92,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Action = [
           "s3:ListAllMyBuckets",
           "s3:GetBucketTagging",
-          "s3:ListBucket"     
+          "s3:ListBucket"
         ],
         Resource = "*"
       },
@@ -138,7 +133,6 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:DeleteObject",
           "s3:ListBucket"
         ],
-
         Resource = [
           "arn:aws:s3:::resume-remote-backend",
           "arn:aws:s3:::resume-remote-backend/*"
@@ -166,7 +160,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Resource = "*"
       },
 
-      # Allow GitHub Actions to pass Lambda role
+
       {
         Effect = "Allow",
         Action = [
@@ -189,10 +183,11 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "dynamodb:PutItem",
           "dynamodb:DescribeTable",
           "dynamodb:DeleteItem",
-          "dynamodb:ListTables" 
+          "dynamodb:ListTables"
         ],
         Resource = [
           "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
+          "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/*"
         ]
       },
 
@@ -216,7 +211,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         ],
         Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:*"
       },
-      
+
       # CloudWatch Logs for Lambda
       {
         Effect = "Allow",
@@ -230,6 +225,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
     ]
   })
 }
+
 
 resource "aws_iam_role_policy_attachment" "github_actions_resume_policy_attachment" {
   role       = aws_iam_role.github_actions_resume_role.name
