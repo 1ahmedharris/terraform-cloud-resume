@@ -195,9 +195,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Action = [
           "dynamodb:ListTagsOfResource",
         ],
-        Resource = [
-          "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/*"
-        ]
+        Resource = "*"
       },
 
       {
