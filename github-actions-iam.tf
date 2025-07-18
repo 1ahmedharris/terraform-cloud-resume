@@ -14,7 +14,7 @@ resource "aws_iam_role" "github_actions_resume_role" {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           },
-          StringLike = {  
+          StringLike = {
             "token.actions.githubusercontent.com:sub" = "repo:${var.github_org_name}/${var.github_repo_name}:ref:refs/heads/main"
           }
         }
@@ -23,9 +23,6 @@ resource "aws_iam_role" "github_actions_resume_role" {
   })
 }
 
-
-
-
 resource "aws_iam_policy" "github_actions_resume_policy" {
   name        = "github-actions-resume-policy"
   description = "Policy allowing GitHub Actions to provision infrastructure for cloud resume and backend"
@@ -33,24 +30,38 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
-
+      # IAM related permissions
+      {
+        Effect = "Allow",
+        Action = [
+          "iam:ListPolicies"
+        ],
+        Resource = "*"
+      },
 
       {
         Effect = "Allow",
         Action = [
           "iam:GetRole",
-          "iam:GetRolePolicy"
+          "iam:GetRolePolicy",
+          "iam:GetPolicy",
+          "iam:ListRolePolicies",
+          "iam:ListAttachedRolePolicies",
+          "iam:GetPolicyVersion"
         ],
         Resource = [
-          "arn:aws:iam::${var.aws_id}:role/*"
+          "arn:aws:iam::${var.aws_id}:role/github-actions-resume-role",
+          "arn:aws:iam::${var.aws_id}:role/lamba-dynamodb-role",
+          "arn:aws:iam::${var.aws_id}:policy/github-actions-resume-policy",
+          "arn:aws:iam::${var.aws_id}:policy/service-role/AWSLambdaBasicExecutionRole"
         ]
       },
-
 
       # CloudFront permissions
       {
         Effect = "Allow",
         Action = [
+          "cloudfront:ListTagsForResource",
           "cloudfront:UpdateDistribution",
           "cloudfront:GetDistribution",
           "cloudfront:CreateInvalidation",
@@ -59,7 +70,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "cloudfront:GetOriginAccessControl",
           "cloudfront:GetCachePolicy"
         ],
-        Resource = "*"
+        Resource = "arn:aws:cloudfront::${var.aws_id}:distribution/E11U5R2YIBF4OY"
       },
 
       # ACM
@@ -84,7 +95,9 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       {
         Effect = "Allow",
         Action = [
-          "s3:ListAllMyBuckets"
+          "s3:ListAllMyBuckets",
+          "s3:GetBucketTagging",
+          "s3:ListBucket"     
         ],
         Resource = "*"
       },
@@ -125,6 +138,7 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "s3:DeleteObject",
           "s3:ListBucket"
         ],
+
         Resource = [
           "arn:aws:s3:::resume-remote-backend",
           "arn:aws:s3:::resume-remote-backend/*"
@@ -143,7 +157,11 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "lambda:InvokeFunction",
           "lambda:CreateFunctionUrlConfig",
           "lambda:UpdateFunctionUrlConfig",
-          "lambda:GetFunctionUrlConfig"
+          "lambda:GetFunctionUrlConfig",
+          "lambda:ListTags",
+          "lambda:ListFunctions",
+          "lambda:ListVersionsByFunction",
+          "lambda:ListAliases"
         ],
         Resource = "*"
       },
@@ -169,9 +187,13 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
           "dynamodb:UpdateTable",
           "dynamodb:GetItem",
           "dynamodb:PutItem",
-          "dynamodb:DeleteItem"
+          "dynamodb:DescribeTable",
+          "dynamodb:DeleteItem",
+          "dynamodb:ListTables" 
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/${var.visitor_count_table}"
+        Resource = [
+          "arn:aws:dynamodb:${var.aws_region}:${var.aws_id}:table/visitor-count-table",
+        ]
       },
 
       # Route 53 permissions
@@ -180,7 +202,8 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         Action = [
           "route53:CreateHostedZone",
           "route53:DeleteHostedZone",
-          "route53:GetHostedZone"
+          "route53:GetHostedZone",
+          "route53:ListTagsForResource"
         ],
         Resource = "*"
       },
@@ -188,30 +211,12 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
       {
         Effect = "Allow",
         Action = [
-          "route53:ListTagsForResource"
-        ],
-        Resource = [
-          "arn:aws:route53:::hostedzone/Z01018062M98VOF9SUSIM",
-          "arn:aws:route53:::hostedzone/Z056701228ISTWPXZ137W"
-        ]
-      },
-
-      {
-        Effect = "Allow",
-        Action = [
-          "logs:DescribeLogGroups"
+          "logs:DescribeLogGroups",
+          "logs:ListTagsForResource"
         ],
         Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:*"
       },
-
-      {
-        Effect = "Allow",
-        Action = [
-          "logs:ListTagsForResource"
-        ],
-        Resource = "arn:aws:logs:${var.aws_region}:${var.aws_id}:log-group:/aws/lambda/aitc-lamba-function"
-      },
-
+      
       # CloudWatch Logs for Lambda
       {
         Effect = "Allow",
@@ -230,5 +235,3 @@ resource "aws_iam_role_policy_attachment" "github_actions_resume_policy_attachme
   role       = aws_iam_role.github_actions_resume_role.name
   policy_arn = aws_iam_policy.github_actions_resume_policy.arn
 }
-
-
