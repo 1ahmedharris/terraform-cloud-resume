@@ -12,7 +12,9 @@ resource "aws_iam_role" "github_actions_resume_role" {
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {
           StringEquals = {
-            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com",
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+          },
+          StringLike = {  
             "token.actions.githubusercontent.com:sub" = "repo:${var.github_org_name}/${var.github_repo_name}:ref:refs/heads/main"
           }
         }
@@ -41,18 +43,6 @@ resource "aws_iam_policy" "github_actions_resume_policy" {
         ],
         Resource = [
           "arn:aws:iam::${var.aws_id}:role/*"
-        ]
-      },
-
-
-      {
-        Effect = "Allow",
-        Action = [
-          "iam:GetPolicy"
-        ],
-        Resource = [
-          "arn:aws:iam::${var.aws_id}:policy/github-actions-resume-policy",
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         ]
       },
 
