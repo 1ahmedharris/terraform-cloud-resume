@@ -38,9 +38,9 @@ resource "aws_cloudfront_distribution" "cloudfront_cdn" {
     allowed_methods            = ["GET", "HEAD"] 
     cached_methods             = ["GET", "HEAD"]
     compress                   = true
-    default_ttl                = 0
-    max_ttl                    = 0
-    min_ttl                    = 0
+    # default_ttl                = 0 removed the following lines to allow Managed-CachingOptimized to manage caching behavior
+    # max_ttl                    = 0
+    # min_ttl                    = 0
     viewer_protocol_policy     = "https-only"
   }
 
